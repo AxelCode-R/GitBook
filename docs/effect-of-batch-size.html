@@ -24,7 +24,7 @@
 <meta name="author" content="Axel Roth" />
 
 
-<meta name="date" content="2021-11-25" />
+<meta name="date" content="2021-11-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -175,13 +175,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.2" data-path="effect-of-batch-size.html"><a href="effect-of-batch-size.html#appendix-complete-code-4"><i class="fa fa-check"></i><b>6.2</b> Appendix (complete code)</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="class-mlp.html"><a href="class-mlp.html"><i class="fa fa-check"></i><b>7</b> Class MLP</a></li>
-<li class="chapter" data-level="8" data-path="decision-tree.html"><a href="decision-tree.html"><i class="fa fa-check"></i><b>8</b> Decision Tree</a>
+<li class="chapter" data-level="8" data-path="decision-trees.html"><a href="decision-trees.html"><i class="fa fa-check"></i><b>8</b> Decision Trees</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="decision-tree.html"><a href="decision-tree.html#entropy"><i class="fa fa-check"></i><b>8.1</b> Entropy</a></li>
-<li class="chapter" data-level="8.2" data-path="decision-tree.html"><a href="decision-tree.html#constructing-the-tree"><i class="fa fa-check"></i><b>8.2</b> Constructing the Tree</a></li>
-<li class="chapter" data-level="8.3" data-path="decision-tree.html"><a href="decision-tree.html#forcast-credit-defaults-with-dt"><i class="fa fa-check"></i><b>8.3</b> Forcast Credit Defaults with DT</a></li>
-<li class="chapter" data-level="8.4" data-path="decision-tree.html"><a href="decision-tree.html#extern-packages"><i class="fa fa-check"></i><b>8.4</b> Extern Packages</a></li>
-<li class="chapter" data-level="8.5" data-path="decision-tree.html"><a href="decision-tree.html#appendix-complete-code-5"><i class="fa fa-check"></i><b>8.5</b> Appendix (complete code)</a></li>
+<li class="chapter" data-level="8.1" data-path="decision-trees.html"><a href="decision-trees.html#entropy"><i class="fa fa-check"></i><b>8.1</b> Entropy</a></li>
+<li class="chapter" data-level="8.2" data-path="decision-trees.html"><a href="decision-trees.html#constructing-the-tree"><i class="fa fa-check"></i><b>8.2</b> Constructing the Tree</a></li>
+<li class="chapter" data-level="8.3" data-path="decision-trees.html"><a href="decision-trees.html#forcast-credit-defaults-with-dt"><i class="fa fa-check"></i><b>8.3</b> Forcast Credit Defaults with DT</a></li>
+<li class="chapter" data-level="8.4" data-path="decision-trees.html"><a href="decision-trees.html#extern-packages"><i class="fa fa-check"></i><b>8.4</b> Extern Packages</a></li>
+<li class="chapter" data-level="8.5" data-path="decision-trees.html"><a href="decision-trees.html#appendix-complete-code-5"><i class="fa fa-check"></i><b>8.5</b> Appendix (complete code)</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -357,7 +357,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb53-19"><a href="effect-of-batch-size.html#cb53-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb53-20"><a href="effect-of-batch-size.html#cb53-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb53-21"><a href="effect-of-batch-size.html#cb53-21" aria-hidden="true" tabindex="-1"></a>confusion_matrix(Y_test, classify(result_test))</span></code></pre></div>
-<pre><code>## Time to train the NN:  7.922863006591797</code></pre>
+<pre><code>## Time to train the NN:  12.061170816421509</code></pre>
 <p><img src="gitbook-demo_files/figure-html/unnamed-chunk-21-15.png" width="576" /></p>
 <pre><code>## Mean Square error over all testdata:  2402.2283244767077
 ## Mean Square error over all classified testdata:  2932.0
@@ -386,7 +386,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb56-19"><a href="effect-of-batch-size.html#cb56-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb56-20"><a href="effect-of-batch-size.html#cb56-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb56-21"><a href="effect-of-batch-size.html#cb56-21" aria-hidden="true" tabindex="-1"></a>confusion_matrix(Y_test, classify(result_test))</span></code></pre></div>
-<pre><code>## Time to train the NN:  22.430907726287842</code></pre>
+<pre><code>## Time to train the NN:  22.013304471969604</code></pre>
 <p><img src="gitbook-demo_files/figure-html/unnamed-chunk-22-17.png" width="576" /></p>
 <pre><code>## Mean Square error over all testdata:  2210.3693145823286
 ## Mean Square error over all classified testdata:  2559.5

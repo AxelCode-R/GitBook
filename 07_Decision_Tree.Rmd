@@ -4,7 +4,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Decision Tree
+# Decision Trees
 The goal of Decision Trees (DT) and Neuronal Netwoks (NN) is the same: to analyze data and provide answers to previously unknown data. Nonetheless, there are significant differences in working with each of these methods. As a result, I've included a link to a thorough [comparison](https://www.kdnuggets.com/2019/06/random-forest-vs-neural-network.html) of these two approaches. As a result, Decision Trees are much simpler than Neuronal Networks, with the added benefit of being easier to interpret the way a certain answer is given. In comparison, Neuronal Networks can easily process large datasets, and you can fine-tune the learning behavior using the hyper-parameter you choose, resulting in high accuracy. If you consider everything, it's better to consider Decision Trees before creating a Neuronal Network because it's a simpler approach. If your data is more complicated or large, Neuronal Networks are the way to go. They frequently use hybrids of Decision Trees and Neuronal Networks to archive understandable results with high accuracy in very complex situations (for example [Neural-Backed Decision Trees](https://bair.berkeley.edu/blog/2020/04/23/decisions/)).
 
 
