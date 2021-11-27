@@ -209,47 +209,47 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Multiple layers of neurons make up a multilayer Perceptron. As a result, we must calculate the forward pass several times, as well as the backward pass. First and foremost, do we need to broaden some definitions in order to support this behavior? The NN of the following image is what we want to do:<br />
 <img src="img/NN_03_new.png" style="width:100.0%" alt="https://app.diagrams.net/" /><br></p>
 <p>It’s my own definition of layers since I believed it would be easier to transition from <span class="math inline">\(n\)</span> to <span class="math inline">\(n+1\)</span> hidden layers if they were displayed as indicated in the image. By evaluating <span class="math inline">\(f(IN^{layer} \cdot W^{layer}) = OUT^{layer}\)</span> and just transferring the result to the next layer like <span class="math inline">\(OUT^{layer} = IN^{layer+1}\)</span>, with <span class="math inline">\(f\)</span> as the chosen activation function, you can see that each layer has the identical procedure in the forward pass.
-We’ll choose the sigmoid function as the activation function <span class="math inline">\(f\)</span> because it has a simple deviation <span class="math inline">\(f&#39;\)</span> which is used for the backward pass and behaves similarly to the heavyside function with an output between 0 and 1.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="multilayer-perceptrons-mlp.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sigmoid(x):</span>
-<span id="cb17-2"><a href="multilayer-perceptrons-mlp.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fl">1.0</span> <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">+</span> np.exp(<span class="op">-</span>x))</span>
-<span id="cb17-3"><a href="multilayer-perceptrons-mlp.html#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="multilayer-perceptrons-mlp.html#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> deriv_sigmoid(x):</span>
-<span id="cb17-5"><a href="multilayer-perceptrons-mlp.html#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> x)</span></code></pre></div>
+We’ll choose the sigmoid function as the activation function <span class="math inline">\(f\)</span> because it has a simple deviation <span class="math inline">\(f&#39;\)</span> which is used for the backward pass and behaves similarly to the heavyside function with an output between zero and one.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="multilayer-perceptrons-mlp.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sigmoid(x):</span>
+<span id="cb18-2"><a href="multilayer-perceptrons-mlp.html#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fl">1.0</span> <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">+</span> np.exp(<span class="op">-</span>x))</span>
+<span id="cb18-3"><a href="multilayer-perceptrons-mlp.html#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="multilayer-perceptrons-mlp.html#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> deriv_sigmoid(x):</span>
+<span id="cb18-5"><a href="multilayer-perceptrons-mlp.html#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> x)</span></code></pre></div>
 <p>Additionaly will we choose the XOR-Gate as training dataset and generate random weights in a very generic approach:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="multilayer-perceptrons-mlp.html#cb18-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array([</span>
-<span id="cb18-2"><a href="multilayer-perceptrons-mlp.html#cb18-2" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>,<span class="dv">0</span>],</span>
-<span id="cb18-3"><a href="multilayer-perceptrons-mlp.html#cb18-3" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>,<span class="dv">1</span>],</span>
-<span id="cb18-4"><a href="multilayer-perceptrons-mlp.html#cb18-4" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>,<span class="dv">0</span>],</span>
-<span id="cb18-5"><a href="multilayer-perceptrons-mlp.html#cb18-5" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>,<span class="dv">1</span>],</span>
-<span id="cb18-6"><a href="multilayer-perceptrons-mlp.html#cb18-6" aria-hidden="true" tabindex="-1"></a>]) </span>
-<span id="cb18-7"><a href="multilayer-perceptrons-mlp.html#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-8"><a href="multilayer-perceptrons-mlp.html#cb18-8" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> np.array([</span>
-<span id="cb18-9"><a href="multilayer-perceptrons-mlp.html#cb18-9" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>],</span>
-<span id="cb18-10"><a href="multilayer-perceptrons-mlp.html#cb18-10" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>],</span>
-<span id="cb18-11"><a href="multilayer-perceptrons-mlp.html#cb18-11" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>],</span>
-<span id="cb18-12"><a href="multilayer-perceptrons-mlp.html#cb18-12" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>]</span>
-<span id="cb18-13"><a href="multilayer-perceptrons-mlp.html#cb18-13" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb18-14"><a href="multilayer-perceptrons-mlp.html#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-15"><a href="multilayer-perceptrons-mlp.html#cb18-15" aria-hidden="true" tabindex="-1"></a>n_input <span class="op">=</span> <span class="bu">len</span>(X[<span class="dv">0</span>])</span>
-<span id="cb18-16"><a href="multilayer-perceptrons-mlp.html#cb18-16" aria-hidden="true" tabindex="-1"></a>n_output <span class="op">=</span> <span class="bu">len</span>(Y[<span class="dv">0</span>])</span>
-<span id="cb18-17"><a href="multilayer-perceptrons-mlp.html#cb18-17" aria-hidden="true" tabindex="-1"></a>hidden_layer_neurons <span class="op">=</span> [<span class="dv">2</span>] <span class="co"># the 2 means that there is one hidden layer with 2 neurons</span></span>
-<span id="cb18-18"><a href="multilayer-perceptrons-mlp.html#cb18-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-19"><a href="multilayer-perceptrons-mlp.html#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_weights(n_input, n_output, hidden_layer_neurons):</span>
-<span id="cb18-20"><a href="multilayer-perceptrons-mlp.html#cb18-20" aria-hidden="true" tabindex="-1"></a>  W <span class="op">=</span> []</span>
-<span id="cb18-21"><a href="multilayer-perceptrons-mlp.html#cb18-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(hidden_layer_neurons)<span class="op">+</span><span class="dv">1</span>):</span>
-<span id="cb18-22"><a href="multilayer-perceptrons-mlp.html#cb18-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i <span class="op">==</span> <span class="dv">0</span>: <span class="co"># first layer</span></span>
-<span id="cb18-23"><a href="multilayer-perceptrons-mlp.html#cb18-23" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((n_input<span class="op">+</span><span class="dv">1</span>, hidden_layer_neurons[i])))</span>
-<span id="cb18-24"><a href="multilayer-perceptrons-mlp.html#cb18-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> i <span class="op">==</span> <span class="bu">len</span>(hidden_layer_neurons): <span class="co"># last layer</span></span>
-<span id="cb18-25"><a href="multilayer-perceptrons-mlp.html#cb18-25" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((hidden_layer_neurons[i<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>, n_output)))</span>
-<span id="cb18-26"><a href="multilayer-perceptrons-mlp.html#cb18-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>: <span class="co"># middle layers</span></span>
-<span id="cb18-27"><a href="multilayer-perceptrons-mlp.html#cb18-27" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((hidden_layer_neurons[i<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>, hidden_layer_neurons[i])))</span>
-<span id="cb18-28"><a href="multilayer-perceptrons-mlp.html#cb18-28" aria-hidden="true" tabindex="-1"></a>   </span>
-<span id="cb18-29"><a href="multilayer-perceptrons-mlp.html#cb18-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(W)</span>
-<span id="cb18-30"><a href="multilayer-perceptrons-mlp.html#cb18-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-31"><a href="multilayer-perceptrons-mlp.html#cb18-31" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> generate_weights(n_input, n_output, hidden_layer_neurons)</span>
-<span id="cb18-32"><a href="multilayer-perceptrons-mlp.html#cb18-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-33"><a href="multilayer-perceptrons-mlp.html#cb18-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;W[0]: </span><span class="ch">\n</span><span class="st">&quot;</span>, W[<span class="dv">0</span>])</span>
-<span id="cb18-34"><a href="multilayer-perceptrons-mlp.html#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;W[1]: </span><span class="ch">\n</span><span class="st">&quot;</span>, W[<span class="dv">1</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="multilayer-perceptrons-mlp.html#cb19-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array([</span>
+<span id="cb19-2"><a href="multilayer-perceptrons-mlp.html#cb19-2" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>,<span class="dv">0</span>],</span>
+<span id="cb19-3"><a href="multilayer-perceptrons-mlp.html#cb19-3" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>,<span class="dv">1</span>],</span>
+<span id="cb19-4"><a href="multilayer-perceptrons-mlp.html#cb19-4" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>,<span class="dv">0</span>],</span>
+<span id="cb19-5"><a href="multilayer-perceptrons-mlp.html#cb19-5" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>,<span class="dv">1</span>],</span>
+<span id="cb19-6"><a href="multilayer-perceptrons-mlp.html#cb19-6" aria-hidden="true" tabindex="-1"></a>]) </span>
+<span id="cb19-7"><a href="multilayer-perceptrons-mlp.html#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="multilayer-perceptrons-mlp.html#cb19-8" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> np.array([</span>
+<span id="cb19-9"><a href="multilayer-perceptrons-mlp.html#cb19-9" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>],</span>
+<span id="cb19-10"><a href="multilayer-perceptrons-mlp.html#cb19-10" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>],</span>
+<span id="cb19-11"><a href="multilayer-perceptrons-mlp.html#cb19-11" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>],</span>
+<span id="cb19-12"><a href="multilayer-perceptrons-mlp.html#cb19-12" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>]</span>
+<span id="cb19-13"><a href="multilayer-perceptrons-mlp.html#cb19-13" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb19-14"><a href="multilayer-perceptrons-mlp.html#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="multilayer-perceptrons-mlp.html#cb19-15" aria-hidden="true" tabindex="-1"></a>n_input <span class="op">=</span> <span class="bu">len</span>(X[<span class="dv">0</span>])</span>
+<span id="cb19-16"><a href="multilayer-perceptrons-mlp.html#cb19-16" aria-hidden="true" tabindex="-1"></a>n_output <span class="op">=</span> <span class="bu">len</span>(Y[<span class="dv">0</span>])</span>
+<span id="cb19-17"><a href="multilayer-perceptrons-mlp.html#cb19-17" aria-hidden="true" tabindex="-1"></a>hidden_layer_neurons <span class="op">=</span> [<span class="dv">2</span>] <span class="co"># the 2 means that there is one hidden layer with 2 neurons</span></span>
+<span id="cb19-18"><a href="multilayer-perceptrons-mlp.html#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="multilayer-perceptrons-mlp.html#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_weights(n_input, n_output, hidden_layer_neurons):</span>
+<span id="cb19-20"><a href="multilayer-perceptrons-mlp.html#cb19-20" aria-hidden="true" tabindex="-1"></a>  W <span class="op">=</span> []</span>
+<span id="cb19-21"><a href="multilayer-perceptrons-mlp.html#cb19-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(hidden_layer_neurons)<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb19-22"><a href="multilayer-perceptrons-mlp.html#cb19-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i <span class="op">==</span> <span class="dv">0</span>: <span class="co"># first layer</span></span>
+<span id="cb19-23"><a href="multilayer-perceptrons-mlp.html#cb19-23" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((n_input<span class="op">+</span><span class="dv">1</span>, hidden_layer_neurons[i])))</span>
+<span id="cb19-24"><a href="multilayer-perceptrons-mlp.html#cb19-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> i <span class="op">==</span> <span class="bu">len</span>(hidden_layer_neurons): <span class="co"># last layer</span></span>
+<span id="cb19-25"><a href="multilayer-perceptrons-mlp.html#cb19-25" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((hidden_layer_neurons[i<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>, n_output)))</span>
+<span id="cb19-26"><a href="multilayer-perceptrons-mlp.html#cb19-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>: <span class="co"># middle layers</span></span>
+<span id="cb19-27"><a href="multilayer-perceptrons-mlp.html#cb19-27" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((hidden_layer_neurons[i<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>, hidden_layer_neurons[i])))</span>
+<span id="cb19-28"><a href="multilayer-perceptrons-mlp.html#cb19-28" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb19-29"><a href="multilayer-perceptrons-mlp.html#cb19-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(W)</span>
+<span id="cb19-30"><a href="multilayer-perceptrons-mlp.html#cb19-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-31"><a href="multilayer-perceptrons-mlp.html#cb19-31" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> generate_weights(n_input, n_output, hidden_layer_neurons)</span>
+<span id="cb19-32"><a href="multilayer-perceptrons-mlp.html#cb19-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-33"><a href="multilayer-perceptrons-mlp.html#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;W[0]: </span><span class="ch">\n</span><span class="st">&quot;</span>, W[<span class="dv">0</span>])</span>
+<span id="cb19-34"><a href="multilayer-perceptrons-mlp.html#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;W[1]: </span><span class="ch">\n</span><span class="st">&quot;</span>, W[<span class="dv">1</span>])</span></code></pre></div>
 <pre><code>## W[0]: 
 ##  [[0.5488135  0.71518937]
 ##  [0.60276338 0.54488318]
@@ -260,29 +260,29 @@ We’ll choose the sigmoid function as the activation function <span class="math
 ##  [0.96366276]]</code></pre>
 <p>The neurons for the hidden layers are generated using the <code>hidden_layer_neurons</code> list, while the input and output layer neurons are calculated from the training dataset. <code>hidden_layer_neurons = [4,2]</code>, for example, can construct two hidden layers with 4 and 2 neurons. I didn’t choose the bias because it is automatically rectified.
 Is it now necessary to construct a helper function to add the biases to the last column of the inputs, like follows:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="multilayer-perceptrons-mlp.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_ones_to_input(x):</span>
-<span id="cb20-2"><a href="multilayer-perceptrons-mlp.html#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(np.append(x, np.array([np.ones(<span class="bu">len</span>(x))]).T, axis<span class="op">=</span><span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="multilayer-perceptrons-mlp.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_ones_to_input(x):</span>
+<span id="cb21-2"><a href="multilayer-perceptrons-mlp.html#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(np.append(x, np.array([np.ones(<span class="bu">len</span>(x))]).T, axis<span class="op">=</span><span class="dv">1</span>))</span></code></pre></div>
 <div id="forward-pass-1" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Forward pass</h2>
 <p>The structur of the new forward function looks exactly like in the single Perceptron:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="multilayer-perceptrons-mlp.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> forward(x, w):</span>
-<span id="cb21-2"><a href="multilayer-perceptrons-mlp.html#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>( sigmoid(x <span class="op">@</span> w) )</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="multilayer-perceptrons-mlp.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> forward(x, w):</span>
+<span id="cb22-2"><a href="multilayer-perceptrons-mlp.html#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>( sigmoid(x <span class="op">@</span> w) )</span></code></pre></div>
 <p>Now we have everything to calculate the forward pass of the NN from above with the generated weights step by step:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="multilayer-perceptrons-mlp.html#cb22-1" aria-hidden="true" tabindex="-1"></a>IN <span class="op">=</span> []</span>
-<span id="cb22-2"><a href="multilayer-perceptrons-mlp.html#cb22-2" aria-hidden="true" tabindex="-1"></a>OUT <span class="op">=</span> []</span>
-<span id="cb22-3"><a href="multilayer-perceptrons-mlp.html#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-4"><a href="multilayer-perceptrons-mlp.html#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># layer 0</span></span>
-<span id="cb22-5"><a href="multilayer-perceptrons-mlp.html#cb22-5" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb22-6"><a href="multilayer-perceptrons-mlp.html#cb22-6" aria-hidden="true" tabindex="-1"></a>IN.append( add_ones_to_input(X) )</span>
-<span id="cb22-7"><a href="multilayer-perceptrons-mlp.html#cb22-7" aria-hidden="true" tabindex="-1"></a>OUT.append( forward(IN[i], W[i]) )</span>
-<span id="cb22-8"><a href="multilayer-perceptrons-mlp.html#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-9"><a href="multilayer-perceptrons-mlp.html#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co"># layer 1</span></span>
-<span id="cb22-10"><a href="multilayer-perceptrons-mlp.html#cb22-10" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb22-11"><a href="multilayer-perceptrons-mlp.html#cb22-11" aria-hidden="true" tabindex="-1"></a>IN.append( add_ones_to_input(OUT[i<span class="op">-</span><span class="dv">1</span>]) )</span>
-<span id="cb22-12"><a href="multilayer-perceptrons-mlp.html#cb22-12" aria-hidden="true" tabindex="-1"></a>OUT.append( forward(IN[i], W[i]) )</span>
-<span id="cb22-13"><a href="multilayer-perceptrons-mlp.html#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-14"><a href="multilayer-perceptrons-mlp.html#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co"># error</span></span>
-<span id="cb22-15"><a href="multilayer-perceptrons-mlp.html#cb22-15" aria-hidden="true" tabindex="-1"></a>Y<span class="op">-</span>OUT[<span class="op">-</span><span class="dv">1</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="multilayer-perceptrons-mlp.html#cb23-1" aria-hidden="true" tabindex="-1"></a>IN <span class="op">=</span> []</span>
+<span id="cb23-2"><a href="multilayer-perceptrons-mlp.html#cb23-2" aria-hidden="true" tabindex="-1"></a>OUT <span class="op">=</span> []</span>
+<span id="cb23-3"><a href="multilayer-perceptrons-mlp.html#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="multilayer-perceptrons-mlp.html#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># layer 0</span></span>
+<span id="cb23-5"><a href="multilayer-perceptrons-mlp.html#cb23-5" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb23-6"><a href="multilayer-perceptrons-mlp.html#cb23-6" aria-hidden="true" tabindex="-1"></a>IN.append( add_ones_to_input(X) )</span>
+<span id="cb23-7"><a href="multilayer-perceptrons-mlp.html#cb23-7" aria-hidden="true" tabindex="-1"></a>OUT.append( forward(IN[i], W[i]) )</span>
+<span id="cb23-8"><a href="multilayer-perceptrons-mlp.html#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="multilayer-perceptrons-mlp.html#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># layer 1</span></span>
+<span id="cb23-10"><a href="multilayer-perceptrons-mlp.html#cb23-10" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb23-11"><a href="multilayer-perceptrons-mlp.html#cb23-11" aria-hidden="true" tabindex="-1"></a>IN.append( add_ones_to_input(OUT[i<span class="op">-</span><span class="dv">1</span>]) )</span>
+<span id="cb23-12"><a href="multilayer-perceptrons-mlp.html#cb23-12" aria-hidden="true" tabindex="-1"></a>OUT.append( forward(IN[i], W[i]) )</span>
+<span id="cb23-13"><a href="multilayer-perceptrons-mlp.html#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="multilayer-perceptrons-mlp.html#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># error</span></span>
+<span id="cb23-15"><a href="multilayer-perceptrons-mlp.html#cb23-15" aria-hidden="true" tabindex="-1"></a>Y<span class="op">-</span>OUT[<span class="op">-</span><span class="dv">1</span>]</span></code></pre></div>
 <pre><code>## array([[-0.85974823],
 ##        [ 0.12242041],
 ##        [ 0.12015376],
@@ -301,19 +301,19 @@ Is it now necessary to construct a helper function to add the biases to the last
 \]</span>
 with <span class="math inline">\(\widetilde{W}\)</span> as the weights of the layer <span class="math inline">\(i\)</span>, without the connection to the bias neuron. You can calculate <span class="math inline">\(\widetilde{W}\)</span> in our datastructure by removing the last row.<br />
 The gradients for the backward pass are calculated using the following code:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="multilayer-perceptrons-mlp.html#cb24-1" aria-hidden="true" tabindex="-1"></a>grad <span class="op">=</span> [<span class="va">None</span>] <span class="op">*</span> <span class="dv">2</span></span>
-<span id="cb24-2"><a href="multilayer-perceptrons-mlp.html#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="multilayer-perceptrons-mlp.html#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># layer 1</span></span>
-<span id="cb24-4"><a href="multilayer-perceptrons-mlp.html#cb24-4" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb24-5"><a href="multilayer-perceptrons-mlp.html#cb24-5" aria-hidden="true" tabindex="-1"></a>grad[i] <span class="op">=</span> deriv_sigmoid(OUT[i]) <span class="op">*</span> (Y<span class="op">-</span>OUT[i])</span>
-<span id="cb24-6"><a href="multilayer-perceptrons-mlp.html#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-7"><a href="multilayer-perceptrons-mlp.html#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># layer 0</span></span>
-<span id="cb24-8"><a href="multilayer-perceptrons-mlp.html#cb24-8" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb24-9"><a href="multilayer-perceptrons-mlp.html#cb24-9" aria-hidden="true" tabindex="-1"></a>grad[i] <span class="op">=</span> deriv_sigmoid(OUT[i]) <span class="op">*</span>(grad[i<span class="op">+</span><span class="dv">1</span>] <span class="op">@</span> W[i<span class="op">+</span><span class="dv">1</span>][<span class="dv">0</span>:<span class="bu">len</span>(W[i<span class="op">+</span><span class="dv">1</span>])<span class="op">-</span><span class="dv">1</span>].T) <span class="co"># without bias weights</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="multilayer-perceptrons-mlp.html#cb25-1" aria-hidden="true" tabindex="-1"></a>grad <span class="op">=</span> [<span class="va">None</span>] <span class="op">*</span> <span class="dv">2</span></span>
+<span id="cb25-2"><a href="multilayer-perceptrons-mlp.html#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="multilayer-perceptrons-mlp.html#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># layer 1</span></span>
+<span id="cb25-4"><a href="multilayer-perceptrons-mlp.html#cb25-4" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb25-5"><a href="multilayer-perceptrons-mlp.html#cb25-5" aria-hidden="true" tabindex="-1"></a>grad[i] <span class="op">=</span> deriv_sigmoid(OUT[i]) <span class="op">*</span> (Y<span class="op">-</span>OUT[i])</span>
+<span id="cb25-6"><a href="multilayer-perceptrons-mlp.html#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="multilayer-perceptrons-mlp.html#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># layer 0</span></span>
+<span id="cb25-8"><a href="multilayer-perceptrons-mlp.html#cb25-8" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb25-9"><a href="multilayer-perceptrons-mlp.html#cb25-9" aria-hidden="true" tabindex="-1"></a>grad[i] <span class="op">=</span> deriv_sigmoid(OUT[i]) <span class="op">*</span>(grad[i<span class="op">+</span><span class="dv">1</span>] <span class="op">@</span> W[i<span class="op">+</span><span class="dv">1</span>][<span class="dv">0</span>:<span class="bu">len</span>(W[i<span class="op">+</span><span class="dv">1</span>])<span class="op">-</span><span class="dv">1</span>].T) <span class="co"># without bias weights</span></span></code></pre></div>
 <p>You can now examine the gradient of the last layer and the direction in which it is displayed:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="multilayer-perceptrons-mlp.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Y: </span><span class="ch">\n</span><span class="st">&quot;</span>,Y)</span>
-<span id="cb25-2"><a href="multilayer-perceptrons-mlp.html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;OUT: </span><span class="ch">\n</span><span class="st">&quot;</span>,OUT[<span class="dv">1</span>])</span>
-<span id="cb25-3"><a href="multilayer-perceptrons-mlp.html#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;grad: </span><span class="ch">\n</span><span class="st">&quot;</span>,grad[<span class="dv">1</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="multilayer-perceptrons-mlp.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Y: </span><span class="ch">\n</span><span class="st">&quot;</span>,Y)</span>
+<span id="cb26-2"><a href="multilayer-perceptrons-mlp.html#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;OUT: </span><span class="ch">\n</span><span class="st">&quot;</span>,OUT[<span class="dv">1</span>])</span>
+<span id="cb26-3"><a href="multilayer-perceptrons-mlp.html#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;grad: </span><span class="ch">\n</span><span class="st">&quot;</span>,grad[<span class="dv">1</span>])</span></code></pre></div>
 <pre><code>## Y: 
 ##  [[0]
 ##  [1]
@@ -335,112 +335,112 @@ The weights with the gradients and the learningrate <span class="math inline">\(
   W^i_{new} = W^i_{old} + \alpha \cdot ( IN^{i\ T} * grad^i) 
 \]</span>
 After the first epoch, we get the following results for the adjusted weights in the example above:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="multilayer-perceptrons-mlp.html#cb27-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.03</span></span>
-<span id="cb27-2"><a href="multilayer-perceptrons-mlp.html#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-3"><a href="multilayer-perceptrons-mlp.html#cb27-3" aria-hidden="true" tabindex="-1"></a>W[<span class="dv">1</span>] <span class="op">=</span> W[<span class="dv">1</span>] <span class="op">+</span> alpha <span class="op">*</span> (IN[<span class="dv">1</span>].T <span class="op">@</span> grad[<span class="dv">1</span>]) </span>
-<span id="cb27-4"><a href="multilayer-perceptrons-mlp.html#cb27-4" aria-hidden="true" tabindex="-1"></a>W[<span class="dv">0</span>] <span class="op">=</span> W[<span class="dv">0</span>] <span class="op">+</span> alpha <span class="op">*</span> (IN[<span class="dv">0</span>].T <span class="op">@</span> grad[<span class="dv">0</span>]) </span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="multilayer-perceptrons-mlp.html#cb28-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.03</span></span>
+<span id="cb28-2"><a href="multilayer-perceptrons-mlp.html#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="multilayer-perceptrons-mlp.html#cb28-3" aria-hidden="true" tabindex="-1"></a>W[<span class="dv">1</span>] <span class="op">=</span> W[<span class="dv">1</span>] <span class="op">+</span> alpha <span class="op">*</span> (IN[<span class="dv">1</span>].T <span class="op">@</span> grad[<span class="dv">1</span>]) </span>
+<span id="cb28-4"><a href="multilayer-perceptrons-mlp.html#cb28-4" aria-hidden="true" tabindex="-1"></a>W[<span class="dv">0</span>] <span class="op">=</span> W[<span class="dv">0</span>] <span class="op">+</span> alpha <span class="op">*</span> (IN[<span class="dv">0</span>].T <span class="op">@</span> grad[<span class="dv">0</span>]) </span></code></pre></div>
 <p>This was the forward and backward pass process in a multilayer Perceptron with two input neurons, two hidden layer neurons, and one output neuron for one epoch. It’s simple to use the above code to make a more generic NN with a variable number of hidden layers and variable training datasets for a given number of epochs, as shown in the appendix below.</p>
 </div>
 <div id="appendix-complete-code-2" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Appendix (complete code)</h2>
-<div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="multilayer-perceptrons-mlp.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb28-2"><a href="multilayer-perceptrons-mlp.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> pyplot</span>
-<span id="cb28-3"><a href="multilayer-perceptrons-mlp.html#cb28-3" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">0</span>)</span>
-<span id="cb28-4"><a href="multilayer-perceptrons-mlp.html#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-5"><a href="multilayer-perceptrons-mlp.html#cb28-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array([</span>
-<span id="cb28-6"><a href="multilayer-perceptrons-mlp.html#cb28-6" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>,<span class="dv">1</span>],</span>
-<span id="cb28-7"><a href="multilayer-perceptrons-mlp.html#cb28-7" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>,<span class="dv">1</span>],</span>
-<span id="cb28-8"><a href="multilayer-perceptrons-mlp.html#cb28-8" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>,<span class="dv">0</span>],</span>
-<span id="cb28-9"><a href="multilayer-perceptrons-mlp.html#cb28-9" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>,<span class="dv">0</span>],</span>
-<span id="cb28-10"><a href="multilayer-perceptrons-mlp.html#cb28-10" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb28-11"><a href="multilayer-perceptrons-mlp.html#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-12"><a href="multilayer-perceptrons-mlp.html#cb28-12" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> np.array([</span>
-<span id="cb28-13"><a href="multilayer-perceptrons-mlp.html#cb28-13" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>],</span>
-<span id="cb28-14"><a href="multilayer-perceptrons-mlp.html#cb28-14" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>],</span>
-<span id="cb28-15"><a href="multilayer-perceptrons-mlp.html#cb28-15" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>],</span>
-<span id="cb28-16"><a href="multilayer-perceptrons-mlp.html#cb28-16" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>]</span>
-<span id="cb28-17"><a href="multilayer-perceptrons-mlp.html#cb28-17" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb28-18"><a href="multilayer-perceptrons-mlp.html#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-19"><a href="multilayer-perceptrons-mlp.html#cb28-19" aria-hidden="true" tabindex="-1"></a>n_input <span class="op">=</span> <span class="bu">len</span>(X[<span class="dv">0</span>])</span>
-<span id="cb28-20"><a href="multilayer-perceptrons-mlp.html#cb28-20" aria-hidden="true" tabindex="-1"></a>n_output <span class="op">=</span> <span class="bu">len</span>(Y[<span class="dv">0</span>])</span>
-<span id="cb28-21"><a href="multilayer-perceptrons-mlp.html#cb28-21" aria-hidden="true" tabindex="-1"></a>hidden_layer_neurons <span class="op">=</span> [<span class="dv">2</span>]</span>
-<span id="cb28-22"><a href="multilayer-perceptrons-mlp.html#cb28-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-23"><a href="multilayer-perceptrons-mlp.html#cb28-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-24"><a href="multilayer-perceptrons-mlp.html#cb28-24" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_weights(n_input, n_output, hidden_layer_neurons):</span>
-<span id="cb28-25"><a href="multilayer-perceptrons-mlp.html#cb28-25" aria-hidden="true" tabindex="-1"></a>  W <span class="op">=</span> []</span>
-<span id="cb28-26"><a href="multilayer-perceptrons-mlp.html#cb28-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(hidden_layer_neurons)<span class="op">+</span><span class="dv">1</span>):</span>
-<span id="cb28-27"><a href="multilayer-perceptrons-mlp.html#cb28-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i <span class="op">==</span> <span class="dv">0</span>: <span class="co"># first layer</span></span>
-<span id="cb28-28"><a href="multilayer-perceptrons-mlp.html#cb28-28" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((n_input <span class="op">+</span> <span class="dv">1</span>, hidden_layer_neurons[i])))</span>
-<span id="cb28-29"><a href="multilayer-perceptrons-mlp.html#cb28-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> i <span class="op">==</span> <span class="bu">len</span>(hidden_layer_neurons): <span class="co"># last layer</span></span>
-<span id="cb28-30"><a href="multilayer-perceptrons-mlp.html#cb28-30" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((hidden_layer_neurons[i<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>, n_output)))</span>
-<span id="cb28-31"><a href="multilayer-perceptrons-mlp.html#cb28-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>: <span class="co"># middle layers</span></span>
-<span id="cb28-32"><a href="multilayer-perceptrons-mlp.html#cb28-32" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((hidden_layer_neurons[i<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>, hidden_layer_neurons[i])))</span>
-<span id="cb28-33"><a href="multilayer-perceptrons-mlp.html#cb28-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(W)</span>
-<span id="cb28-34"><a href="multilayer-perceptrons-mlp.html#cb28-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-35"><a href="multilayer-perceptrons-mlp.html#cb28-35" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_ones_to_input(x):</span>
-<span id="cb28-36"><a href="multilayer-perceptrons-mlp.html#cb28-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(np.append(x, np.array([np.ones(<span class="bu">len</span>(x))]).T, axis<span class="op">=</span><span class="dv">1</span>))</span>
-<span id="cb28-37"><a href="multilayer-perceptrons-mlp.html#cb28-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-38"><a href="multilayer-perceptrons-mlp.html#cb28-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-39"><a href="multilayer-perceptrons-mlp.html#cb28-39" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> generate_weights(n_input, n_output, hidden_layer_neurons)</span>
-<span id="cb28-40"><a href="multilayer-perceptrons-mlp.html#cb28-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-41"><a href="multilayer-perceptrons-mlp.html#cb28-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-42"><a href="multilayer-perceptrons-mlp.html#cb28-42" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sigmoid(x):</span>
-<span id="cb28-43"><a href="multilayer-perceptrons-mlp.html#cb28-43" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fl">1.0</span> <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">+</span> np.exp(<span class="op">-</span>x))</span>
-<span id="cb28-44"><a href="multilayer-perceptrons-mlp.html#cb28-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-45"><a href="multilayer-perceptrons-mlp.html#cb28-45" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> deriv_sigmoid(x):</span>
-<span id="cb28-46"><a href="multilayer-perceptrons-mlp.html#cb28-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> x)</span>
-<span id="cb28-47"><a href="multilayer-perceptrons-mlp.html#cb28-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-48"><a href="multilayer-perceptrons-mlp.html#cb28-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-49"><a href="multilayer-perceptrons-mlp.html#cb28-49" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> forward(x, w):</span>
-<span id="cb28-50"><a href="multilayer-perceptrons-mlp.html#cb28-50" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>( sigmoid(x <span class="op">@</span> w) )</span>
-<span id="cb28-51"><a href="multilayer-perceptrons-mlp.html#cb28-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-52"><a href="multilayer-perceptrons-mlp.html#cb28-52" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> backward(IN, OUT, W, Y, grad, k):</span>
-<span id="cb28-53"><a href="multilayer-perceptrons-mlp.html#cb28-53" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> k <span class="op">==</span> <span class="bu">len</span>(grad)<span class="op">-</span><span class="dv">1</span>:</span>
-<span id="cb28-54"><a href="multilayer-perceptrons-mlp.html#cb28-54" aria-hidden="true" tabindex="-1"></a>    grad[k] <span class="op">=</span> deriv_sigmoid(OUT[k]) <span class="op">*</span> (Y<span class="op">-</span>OUT[k])</span>
-<span id="cb28-55"><a href="multilayer-perceptrons-mlp.html#cb28-55" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>:</span>
-<span id="cb28-56"><a href="multilayer-perceptrons-mlp.html#cb28-56" aria-hidden="true" tabindex="-1"></a>    grad[k] <span class="op">=</span> deriv_sigmoid(OUT[k]) <span class="op">*</span>(grad[k<span class="op">+</span><span class="dv">1</span>] <span class="op">@</span> W[k<span class="op">+</span><span class="dv">1</span>][<span class="dv">0</span>:<span class="bu">len</span>(W[k<span class="op">+</span><span class="dv">1</span>])<span class="op">-</span><span class="dv">1</span>].T)</span>
-<span id="cb28-57"><a href="multilayer-perceptrons-mlp.html#cb28-57" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(grad)</span>
-<span id="cb28-58"><a href="multilayer-perceptrons-mlp.html#cb28-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-59"><a href="multilayer-perceptrons-mlp.html#cb28-59" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.03</span></span>
-<span id="cb28-60"><a href="multilayer-perceptrons-mlp.html#cb28-60" aria-hidden="true" tabindex="-1"></a>errors <span class="op">=</span> []</span>
-<span id="cb28-61"><a href="multilayer-perceptrons-mlp.html#cb28-61" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">40000</span>):</span>
-<span id="cb28-62"><a href="multilayer-perceptrons-mlp.html#cb28-62" aria-hidden="true" tabindex="-1"></a>  IN <span class="op">=</span> []</span>
-<span id="cb28-63"><a href="multilayer-perceptrons-mlp.html#cb28-63" aria-hidden="true" tabindex="-1"></a>  OUT <span class="op">=</span> []</span>
-<span id="cb28-64"><a href="multilayer-perceptrons-mlp.html#cb28-64" aria-hidden="true" tabindex="-1"></a>  grad <span class="op">=</span> [<span class="va">None</span>]<span class="op">*</span><span class="bu">len</span>(W)</span>
-<span id="cb28-65"><a href="multilayer-perceptrons-mlp.html#cb28-65" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(W)):</span>
-<span id="cb28-66"><a href="multilayer-perceptrons-mlp.html#cb28-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> k<span class="op">==</span><span class="dv">0</span>:</span>
-<span id="cb28-67"><a href="multilayer-perceptrons-mlp.html#cb28-67" aria-hidden="true" tabindex="-1"></a>      IN.append(add_ones_to_input(X))</span>
-<span id="cb28-68"><a href="multilayer-perceptrons-mlp.html#cb28-68" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb28-69"><a href="multilayer-perceptrons-mlp.html#cb28-69" aria-hidden="true" tabindex="-1"></a>      IN.append(add_ones_to_input(OUT[k<span class="op">-</span><span class="dv">1</span>]))</span>
-<span id="cb28-70"><a href="multilayer-perceptrons-mlp.html#cb28-70" aria-hidden="true" tabindex="-1"></a>    OUT.append(forward(x<span class="op">=</span>IN[k], w<span class="op">=</span>W[k]))</span>
-<span id="cb28-71"><a href="multilayer-perceptrons-mlp.html#cb28-71" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-72"><a href="multilayer-perceptrons-mlp.html#cb28-72" aria-hidden="true" tabindex="-1"></a>  errors.append(Y <span class="op">-</span> OUT[<span class="op">-</span><span class="dv">1</span>])</span>
-<span id="cb28-73"><a href="multilayer-perceptrons-mlp.html#cb28-73" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-74"><a href="multilayer-perceptrons-mlp.html#cb28-74" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(W)<span class="op">-</span><span class="dv">1</span>,<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>):</span>
-<span id="cb28-75"><a href="multilayer-perceptrons-mlp.html#cb28-75" aria-hidden="true" tabindex="-1"></a>    grad <span class="op">=</span> backward(IN, OUT, W, Y, grad, k) </span>
-<span id="cb28-76"><a href="multilayer-perceptrons-mlp.html#cb28-76" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-77"><a href="multilayer-perceptrons-mlp.html#cb28-77" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(W)):</span>
-<span id="cb28-78"><a href="multilayer-perceptrons-mlp.html#cb28-78" aria-hidden="true" tabindex="-1"></a>    W[k] <span class="op">=</span> W[k] <span class="op">+</span> alpha <span class="op">*</span> (IN[k].T <span class="op">@</span> grad[k])</span>
-<span id="cb28-79"><a href="multilayer-perceptrons-mlp.html#cb28-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-80"><a href="multilayer-perceptrons-mlp.html#cb28-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-81"><a href="multilayer-perceptrons-mlp.html#cb28-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-82"><a href="multilayer-perceptrons-mlp.html#cb28-82" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mean_square_error(error):</span>
-<span id="cb28-83"><a href="multilayer-perceptrons-mlp.html#cb28-83" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>( <span class="fl">0.5</span> <span class="op">*</span> np.<span class="bu">sum</span>(error <span class="op">**</span> <span class="dv">2</span>) )</span>
-<span id="cb28-84"><a href="multilayer-perceptrons-mlp.html#cb28-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-85"><a href="multilayer-perceptrons-mlp.html#cb28-85" aria-hidden="true" tabindex="-1"></a>mean_square_errors <span class="op">=</span> np.array(<span class="bu">list</span>(<span class="bu">map</span>(mean_square_error, errors)))</span>
-<span id="cb28-86"><a href="multilayer-perceptrons-mlp.html#cb28-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-87"><a href="multilayer-perceptrons-mlp.html#cb28-87" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_error(errors, title):</span>
-<span id="cb28-88"><a href="multilayer-perceptrons-mlp.html#cb28-88" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="bu">len</span>(errors)))</span>
-<span id="cb28-89"><a href="multilayer-perceptrons-mlp.html#cb28-89" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> np.array(errors)</span>
-<span id="cb28-90"><a href="multilayer-perceptrons-mlp.html#cb28-90" aria-hidden="true" tabindex="-1"></a>  pyplot.figure(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">6</span>))</span>
-<span id="cb28-91"><a href="multilayer-perceptrons-mlp.html#cb28-91" aria-hidden="true" tabindex="-1"></a>  pyplot.plot(x, y, <span class="st">&quot;g&quot;</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb28-92"><a href="multilayer-perceptrons-mlp.html#cb28-92" aria-hidden="true" tabindex="-1"></a>  pyplot.xlabel(<span class="st">&quot;Iterations&quot;</span>, fontsize <span class="op">=</span> <span class="dv">16</span>)</span>
-<span id="cb28-93"><a href="multilayer-perceptrons-mlp.html#cb28-93" aria-hidden="true" tabindex="-1"></a>  pyplot.ylabel(<span class="st">&quot;Mean Square Error&quot;</span>, fontsize <span class="op">=</span> <span class="dv">16</span>)</span>
-<span id="cb28-94"><a href="multilayer-perceptrons-mlp.html#cb28-94" aria-hidden="true" tabindex="-1"></a>  pyplot.title(title)</span>
-<span id="cb28-95"><a href="multilayer-perceptrons-mlp.html#cb28-95" aria-hidden="true" tabindex="-1"></a>  pyplot.ylim(<span class="dv">0</span>,<span class="dv">1</span>)</span>
-<span id="cb28-96"><a href="multilayer-perceptrons-mlp.html#cb28-96" aria-hidden="true" tabindex="-1"></a>  pyplot.show()</span>
-<span id="cb28-97"><a href="multilayer-perceptrons-mlp.html#cb28-97" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb28-98"><a href="multilayer-perceptrons-mlp.html#cb28-98" aria-hidden="true" tabindex="-1"></a>plot_error(mean_square_errors, <span class="st">&quot;Mean-Square-Errors of MLP 2x2x1&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="multilayer-perceptrons-mlp.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb29-2"><a href="multilayer-perceptrons-mlp.html#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> pyplot</span>
+<span id="cb29-3"><a href="multilayer-perceptrons-mlp.html#cb29-3" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">0</span>)</span>
+<span id="cb29-4"><a href="multilayer-perceptrons-mlp.html#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="multilayer-perceptrons-mlp.html#cb29-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array([</span>
+<span id="cb29-6"><a href="multilayer-perceptrons-mlp.html#cb29-6" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>,<span class="dv">1</span>],</span>
+<span id="cb29-7"><a href="multilayer-perceptrons-mlp.html#cb29-7" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>,<span class="dv">1</span>],</span>
+<span id="cb29-8"><a href="multilayer-perceptrons-mlp.html#cb29-8" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>,<span class="dv">0</span>],</span>
+<span id="cb29-9"><a href="multilayer-perceptrons-mlp.html#cb29-9" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>,<span class="dv">0</span>],</span>
+<span id="cb29-10"><a href="multilayer-perceptrons-mlp.html#cb29-10" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb29-11"><a href="multilayer-perceptrons-mlp.html#cb29-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-12"><a href="multilayer-perceptrons-mlp.html#cb29-12" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> np.array([</span>
+<span id="cb29-13"><a href="multilayer-perceptrons-mlp.html#cb29-13" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>],</span>
+<span id="cb29-14"><a href="multilayer-perceptrons-mlp.html#cb29-14" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>],</span>
+<span id="cb29-15"><a href="multilayer-perceptrons-mlp.html#cb29-15" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>],</span>
+<span id="cb29-16"><a href="multilayer-perceptrons-mlp.html#cb29-16" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">0</span>]</span>
+<span id="cb29-17"><a href="multilayer-perceptrons-mlp.html#cb29-17" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb29-18"><a href="multilayer-perceptrons-mlp.html#cb29-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-19"><a href="multilayer-perceptrons-mlp.html#cb29-19" aria-hidden="true" tabindex="-1"></a>n_input <span class="op">=</span> <span class="bu">len</span>(X[<span class="dv">0</span>])</span>
+<span id="cb29-20"><a href="multilayer-perceptrons-mlp.html#cb29-20" aria-hidden="true" tabindex="-1"></a>n_output <span class="op">=</span> <span class="bu">len</span>(Y[<span class="dv">0</span>])</span>
+<span id="cb29-21"><a href="multilayer-perceptrons-mlp.html#cb29-21" aria-hidden="true" tabindex="-1"></a>hidden_layer_neurons <span class="op">=</span> [<span class="dv">2</span>]</span>
+<span id="cb29-22"><a href="multilayer-perceptrons-mlp.html#cb29-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-23"><a href="multilayer-perceptrons-mlp.html#cb29-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-24"><a href="multilayer-perceptrons-mlp.html#cb29-24" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_weights(n_input, n_output, hidden_layer_neurons):</span>
+<span id="cb29-25"><a href="multilayer-perceptrons-mlp.html#cb29-25" aria-hidden="true" tabindex="-1"></a>  W <span class="op">=</span> []</span>
+<span id="cb29-26"><a href="multilayer-perceptrons-mlp.html#cb29-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(hidden_layer_neurons)<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb29-27"><a href="multilayer-perceptrons-mlp.html#cb29-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i <span class="op">==</span> <span class="dv">0</span>: <span class="co"># first layer</span></span>
+<span id="cb29-28"><a href="multilayer-perceptrons-mlp.html#cb29-28" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((n_input <span class="op">+</span> <span class="dv">1</span>, hidden_layer_neurons[i])))</span>
+<span id="cb29-29"><a href="multilayer-perceptrons-mlp.html#cb29-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> i <span class="op">==</span> <span class="bu">len</span>(hidden_layer_neurons): <span class="co"># last layer</span></span>
+<span id="cb29-30"><a href="multilayer-perceptrons-mlp.html#cb29-30" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((hidden_layer_neurons[i<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>, n_output)))</span>
+<span id="cb29-31"><a href="multilayer-perceptrons-mlp.html#cb29-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>: <span class="co"># middle layers</span></span>
+<span id="cb29-32"><a href="multilayer-perceptrons-mlp.html#cb29-32" aria-hidden="true" tabindex="-1"></a>      W.append(np.random.random((hidden_layer_neurons[i<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>, hidden_layer_neurons[i])))</span>
+<span id="cb29-33"><a href="multilayer-perceptrons-mlp.html#cb29-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(W)</span>
+<span id="cb29-34"><a href="multilayer-perceptrons-mlp.html#cb29-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-35"><a href="multilayer-perceptrons-mlp.html#cb29-35" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_ones_to_input(x):</span>
+<span id="cb29-36"><a href="multilayer-perceptrons-mlp.html#cb29-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(np.append(x, np.array([np.ones(<span class="bu">len</span>(x))]).T, axis<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb29-37"><a href="multilayer-perceptrons-mlp.html#cb29-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-38"><a href="multilayer-perceptrons-mlp.html#cb29-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-39"><a href="multilayer-perceptrons-mlp.html#cb29-39" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> generate_weights(n_input, n_output, hidden_layer_neurons)</span>
+<span id="cb29-40"><a href="multilayer-perceptrons-mlp.html#cb29-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-41"><a href="multilayer-perceptrons-mlp.html#cb29-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-42"><a href="multilayer-perceptrons-mlp.html#cb29-42" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sigmoid(x):</span>
+<span id="cb29-43"><a href="multilayer-perceptrons-mlp.html#cb29-43" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fl">1.0</span> <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">+</span> np.exp(<span class="op">-</span>x))</span>
+<span id="cb29-44"><a href="multilayer-perceptrons-mlp.html#cb29-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-45"><a href="multilayer-perceptrons-mlp.html#cb29-45" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> deriv_sigmoid(x):</span>
+<span id="cb29-46"><a href="multilayer-perceptrons-mlp.html#cb29-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> x)</span>
+<span id="cb29-47"><a href="multilayer-perceptrons-mlp.html#cb29-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-48"><a href="multilayer-perceptrons-mlp.html#cb29-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-49"><a href="multilayer-perceptrons-mlp.html#cb29-49" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> forward(x, w):</span>
+<span id="cb29-50"><a href="multilayer-perceptrons-mlp.html#cb29-50" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>( sigmoid(x <span class="op">@</span> w) )</span>
+<span id="cb29-51"><a href="multilayer-perceptrons-mlp.html#cb29-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-52"><a href="multilayer-perceptrons-mlp.html#cb29-52" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> backward(IN, OUT, W, Y, grad, k):</span>
+<span id="cb29-53"><a href="multilayer-perceptrons-mlp.html#cb29-53" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> k <span class="op">==</span> <span class="bu">len</span>(grad)<span class="op">-</span><span class="dv">1</span>:</span>
+<span id="cb29-54"><a href="multilayer-perceptrons-mlp.html#cb29-54" aria-hidden="true" tabindex="-1"></a>    grad[k] <span class="op">=</span> deriv_sigmoid(OUT[k]) <span class="op">*</span> (Y<span class="op">-</span>OUT[k])</span>
+<span id="cb29-55"><a href="multilayer-perceptrons-mlp.html#cb29-55" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>:</span>
+<span id="cb29-56"><a href="multilayer-perceptrons-mlp.html#cb29-56" aria-hidden="true" tabindex="-1"></a>    grad[k] <span class="op">=</span> deriv_sigmoid(OUT[k]) <span class="op">*</span>(grad[k<span class="op">+</span><span class="dv">1</span>] <span class="op">@</span> W[k<span class="op">+</span><span class="dv">1</span>][<span class="dv">0</span>:<span class="bu">len</span>(W[k<span class="op">+</span><span class="dv">1</span>])<span class="op">-</span><span class="dv">1</span>].T)</span>
+<span id="cb29-57"><a href="multilayer-perceptrons-mlp.html#cb29-57" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(grad)</span>
+<span id="cb29-58"><a href="multilayer-perceptrons-mlp.html#cb29-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-59"><a href="multilayer-perceptrons-mlp.html#cb29-59" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.03</span></span>
+<span id="cb29-60"><a href="multilayer-perceptrons-mlp.html#cb29-60" aria-hidden="true" tabindex="-1"></a>errors <span class="op">=</span> []</span>
+<span id="cb29-61"><a href="multilayer-perceptrons-mlp.html#cb29-61" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">40000</span>):</span>
+<span id="cb29-62"><a href="multilayer-perceptrons-mlp.html#cb29-62" aria-hidden="true" tabindex="-1"></a>  IN <span class="op">=</span> []</span>
+<span id="cb29-63"><a href="multilayer-perceptrons-mlp.html#cb29-63" aria-hidden="true" tabindex="-1"></a>  OUT <span class="op">=</span> []</span>
+<span id="cb29-64"><a href="multilayer-perceptrons-mlp.html#cb29-64" aria-hidden="true" tabindex="-1"></a>  grad <span class="op">=</span> [<span class="va">None</span>]<span class="op">*</span><span class="bu">len</span>(W)</span>
+<span id="cb29-65"><a href="multilayer-perceptrons-mlp.html#cb29-65" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(W)):</span>
+<span id="cb29-66"><a href="multilayer-perceptrons-mlp.html#cb29-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> k<span class="op">==</span><span class="dv">0</span>:</span>
+<span id="cb29-67"><a href="multilayer-perceptrons-mlp.html#cb29-67" aria-hidden="true" tabindex="-1"></a>      IN.append(add_ones_to_input(X))</span>
+<span id="cb29-68"><a href="multilayer-perceptrons-mlp.html#cb29-68" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb29-69"><a href="multilayer-perceptrons-mlp.html#cb29-69" aria-hidden="true" tabindex="-1"></a>      IN.append(add_ones_to_input(OUT[k<span class="op">-</span><span class="dv">1</span>]))</span>
+<span id="cb29-70"><a href="multilayer-perceptrons-mlp.html#cb29-70" aria-hidden="true" tabindex="-1"></a>    OUT.append(forward(x<span class="op">=</span>IN[k], w<span class="op">=</span>W[k]))</span>
+<span id="cb29-71"><a href="multilayer-perceptrons-mlp.html#cb29-71" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-72"><a href="multilayer-perceptrons-mlp.html#cb29-72" aria-hidden="true" tabindex="-1"></a>  errors.append(Y <span class="op">-</span> OUT[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb29-73"><a href="multilayer-perceptrons-mlp.html#cb29-73" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-74"><a href="multilayer-perceptrons-mlp.html#cb29-74" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(W)<span class="op">-</span><span class="dv">1</span>,<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>):</span>
+<span id="cb29-75"><a href="multilayer-perceptrons-mlp.html#cb29-75" aria-hidden="true" tabindex="-1"></a>    grad <span class="op">=</span> backward(IN, OUT, W, Y, grad, k) </span>
+<span id="cb29-76"><a href="multilayer-perceptrons-mlp.html#cb29-76" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-77"><a href="multilayer-perceptrons-mlp.html#cb29-77" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(W)):</span>
+<span id="cb29-78"><a href="multilayer-perceptrons-mlp.html#cb29-78" aria-hidden="true" tabindex="-1"></a>    W[k] <span class="op">=</span> W[k] <span class="op">+</span> alpha <span class="op">*</span> (IN[k].T <span class="op">@</span> grad[k])</span>
+<span id="cb29-79"><a href="multilayer-perceptrons-mlp.html#cb29-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-80"><a href="multilayer-perceptrons-mlp.html#cb29-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-81"><a href="multilayer-perceptrons-mlp.html#cb29-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-82"><a href="multilayer-perceptrons-mlp.html#cb29-82" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mean_square_error(error):</span>
+<span id="cb29-83"><a href="multilayer-perceptrons-mlp.html#cb29-83" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>( <span class="fl">0.5</span> <span class="op">*</span> np.<span class="bu">sum</span>(error <span class="op">**</span> <span class="dv">2</span>) )</span>
+<span id="cb29-84"><a href="multilayer-perceptrons-mlp.html#cb29-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-85"><a href="multilayer-perceptrons-mlp.html#cb29-85" aria-hidden="true" tabindex="-1"></a>mean_square_errors <span class="op">=</span> np.array(<span class="bu">list</span>(<span class="bu">map</span>(mean_square_error, errors)))</span>
+<span id="cb29-86"><a href="multilayer-perceptrons-mlp.html#cb29-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-87"><a href="multilayer-perceptrons-mlp.html#cb29-87" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_error(errors, title):</span>
+<span id="cb29-88"><a href="multilayer-perceptrons-mlp.html#cb29-88" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="bu">len</span>(errors)))</span>
+<span id="cb29-89"><a href="multilayer-perceptrons-mlp.html#cb29-89" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> np.array(errors)</span>
+<span id="cb29-90"><a href="multilayer-perceptrons-mlp.html#cb29-90" aria-hidden="true" tabindex="-1"></a>  pyplot.figure(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">6</span>))</span>
+<span id="cb29-91"><a href="multilayer-perceptrons-mlp.html#cb29-91" aria-hidden="true" tabindex="-1"></a>  pyplot.plot(x, y, <span class="st">&quot;g&quot;</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb29-92"><a href="multilayer-perceptrons-mlp.html#cb29-92" aria-hidden="true" tabindex="-1"></a>  pyplot.xlabel(<span class="st">&quot;Iterations&quot;</span>, fontsize <span class="op">=</span> <span class="dv">16</span>)</span>
+<span id="cb29-93"><a href="multilayer-perceptrons-mlp.html#cb29-93" aria-hidden="true" tabindex="-1"></a>  pyplot.ylabel(<span class="st">&quot;Mean Square Error&quot;</span>, fontsize <span class="op">=</span> <span class="dv">16</span>)</span>
+<span id="cb29-94"><a href="multilayer-perceptrons-mlp.html#cb29-94" aria-hidden="true" tabindex="-1"></a>  pyplot.title(title)</span>
+<span id="cb29-95"><a href="multilayer-perceptrons-mlp.html#cb29-95" aria-hidden="true" tabindex="-1"></a>  pyplot.ylim(<span class="dv">0</span>,<span class="dv">1</span>)</span>
+<span id="cb29-96"><a href="multilayer-perceptrons-mlp.html#cb29-96" aria-hidden="true" tabindex="-1"></a>  pyplot.show()</span>
+<span id="cb29-97"><a href="multilayer-perceptrons-mlp.html#cb29-97" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-98"><a href="multilayer-perceptrons-mlp.html#cb29-98" aria-hidden="true" tabindex="-1"></a>plot_error(mean_square_errors, <span class="st">&quot;Mean-Square-Errors of MLP 2x2x1&quot;</span>)</span></code></pre></div>
 <p><img src="gitbook-demo_files/figure-html/2_9-7.png" width="576" /></p>
 
 </div>

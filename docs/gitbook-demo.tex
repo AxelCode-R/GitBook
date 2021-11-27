@@ -440,6 +440,11 @@ If you survived until now, you have learned how to program a single Perceptron!
 
 A single Perceptron with the heavyside activationfunction defines a classifier with the outputs 0 and 1. To find the correct solution, it needs to define a combination of weights and bias so that the inputs can be transferred to the groups \(X \cdot W \geq \beta\) or \(X \cdot W < \beta\). The single Perceptron only converges to the given results, if the inputs could be splitted into groups by a straight line in the graph. For example the OR-Gate:
 
+\begin{verbatim}
+## (-0.1, 1.1)
+## (-0.1, 1.1)
+\end{verbatim}
+
 \includegraphics{gitbook-demo_files/figure-latex/unnamed-chunk-4-3.pdf}
 
 The red points (equals \(Y_i=1\)) and the black points (equals \(Y_i=0\)) can be split up with a straight line. If this isn't possible, as in the XOR-Gate, the single Perceptron will never find a combination of bias and weights to perform well. This explains why we need atleast multiple layers, as described in the chapter on multilayer Perceptrons. \href{https://towardsdatascience.com/how-neural-networks-solve-the-xor-problem-59763136bdd7}{Here} can you find a good source with more explanation.
@@ -660,7 +665,7 @@ Multiple layers of neurons make up a multilayer Perceptron. As a result, we must
 \includegraphics[width=1\textwidth,height=\textheight]{./img/NN_03_new.png}
 
 It's my own definition of layers since I believed it would be easier to transition from \(n\) to \(n+1\) hidden layers if they were displayed as indicated in the image. By evaluating \(f(IN^{layer} \cdot W^{layer}) = OUT^{layer}\) and just transferring the result to the next layer like \(OUT^{layer} = IN^{layer+1}\), with \(f\) as the chosen activation function, you can see that each layer has the identical procedure in the forward pass.
-We'll choose the sigmoid function as the activation function \(f\) because it has a simple deviation \(f'\) which is used for the backward pass and behaves similarly to the heavyside function with an output between 0 and 1.
+We'll choose the sigmoid function as the activation function \(f\) because it has a simple deviation \(f'\) which is used for the backward pass and behaves similarly to the heavyside function with an output between zero and one.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1574,7 +1579,7 @@ Everything is loaded and set up. Now can we compare the time and the error for d
 \end{Shaded}
 
 \begin{verbatim}
-## Time to train the NN:  8.174357175827026
+## Time to train the NN:  8.100166082382202
 \end{verbatim}
 
 \includegraphics{gitbook-demo_files/figure-latex/unnamed-chunk-21-15.pdf}
@@ -1615,7 +1620,7 @@ Everything is loaded and set up. Now can we compare the time and the error for d
 \end{Shaded}
 
 \begin{verbatim}
-## Time to train the NN:  22.673624753952026
+## Time to train the NN:  23.2119083404541
 \end{verbatim}
 
 \includegraphics{gitbook-demo_files/figure-latex/unnamed-chunk-22-17.pdf}

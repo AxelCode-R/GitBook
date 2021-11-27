@@ -224,13 +224,15 @@ If you survived until now, you have learned how to program a single Perceptron!
 A single Perceptron with the heavyside activationfunction defines a classifier with the outputs 0 and 1. To find the correct solution, it needs to define a combination of weights and bias so that the inputs can be transferred to the groups $X \cdot W \geq \beta$ or $X \cdot W < \beta$. The single Perceptron only converges to the given results, if the inputs could be splitted into groups by a straight line in the graph. For example the OR-Gate:  
 
 ```{python, echo=FALSE}
-x1 = np.arange(-0.1, 1.1, 0.01)
+x1 = np.arange(-1, 2, 0.01)
 x2 = -x1 + 0.6
 
 pyplot.figure(figsize=(3,3))
-pyplot.plot(x1, x2, "g", linewidth=2)
+pyplot.plot(x1, x2, "g", linewidth=4)
 pyplot.plot([0],[0],"ko", markersize=12)
 pyplot.plot([0,1,1],[1,0,1],"ro", markersize=12)
+pyplot.xlim(-0.1,1.1)
+pyplot.ylim(-0.1,1.1)
 pyplot.tight_layout()
 pyplot.show()
 ```
